@@ -9,6 +9,7 @@ void parseAndPrint (FILE * file, int granularity)
 	int currentChar  = 0;
 	int msbOfAddress = 0;
 	int bytesCounter = 0;
+	int endOfLine    = 0;
 
 	currentChar = fgetc(file);
 
@@ -26,18 +27,23 @@ void parseAndPrint (FILE * file, int granularity)
 			printf("\n            00 01 02 03 04 05 06 07");
 			break;
 	}
-	printf("\n0x%08x ", msbOfAddress);
 
 	while (currentChar != EOF)
 	{
-		printf(" %02x", currentChar);
-		currentChar = fgetc(file);
-		bytesCounter++;
+		endOfLine = 0;
+		printf("\n0x%08x ", msbOfAddress);
 
-		if (bytesCounter%granularity == 0)
+		while ( (currentChar != EOF) && (endOfLine == 0) )
 		{
-			msbOfAddress = msbOfAddress + granularity;
-			printf("\n0x%08x ", msbOfAddress);
+			printf(" %02x", currentChar);
+			currentChar = fgetc(file);
+			bytesCounter++;
+
+			if (bytesCounter%granularity == 0)
+			{
+				msbOfAddress = msbOfAddress + granularity;
+				endOfLine = 1;
+			}
 		}
 	}
 
